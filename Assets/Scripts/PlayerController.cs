@@ -6,24 +6,27 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     // Components
+    [Header("Components")]
     public CharacterController controller;
     PlayerActions controls;
     public Animator animator;
     Camera mainCamera;
 
     // Values
+    [Header("Values")]
     public float speed = 6;
 
     Vector2 inputDirection;
     Vector3 direction;
-    public float turnSmoothTime = 0.25f;
+    float turnSmoothTime = 15f;
     float turnSmoothVelocity;
 
     // Attacks (my own system)
-    public int numberOfClicks = 0;
-    float resetComboTime = 0.5f;
+    bool canAttack = true;
+    int numberOfClicks = 0;
 
-    public float attackTimer = 0;
+    float attackTimer = 0;
+    public float delayAttackTimer = 0.5f;
 
     private void Awake()
     {
@@ -49,16 +52,16 @@ public class PlayerController : MonoBehaviour
 
         if (direction.magnitude > 0.1f)
         {
-            if (numberOfClicks <= 0)
+            float actualSpeed = inputDirection.magnitude > 0.6f ? speed : speed / 2;
+
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime * Time.deltaTime);
+
+            Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+
+            if (attackTimer <= 0)
             {
-                float actualSpeed = inputDirection.magnitude > 0.6f ? speed : speed / 2;
-
-                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
-                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
                 transform.rotation = Quaternion.Euler(0, angle, 0);
-
-                Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-
                 controller.Move(moveDirection.normalized * actualSpeed * Time.deltaTime);
             }
         }
@@ -69,10 +72,11 @@ public class PlayerController : MonoBehaviour
         {
             attackTimer -= Time.deltaTime;
         }
-        else 
-        { 
+        else
+        {
             attackTimer = 0;
             numberOfClicks = 0;
+            //canAttack = true;
         }
 
         HandleAnimations();
@@ -101,6 +105,9 @@ public class PlayerController : MonoBehaviour
             case 3:
                 animator.SetBool("Hit3", true);
                 break;
+            case 4:
+                animator.SetBool("Hit3", true);
+                break;
             default:
                 animator.SetBool("Hit1", false);
                 animator.SetBool("Hit2", false);
@@ -113,35 +120,34 @@ public class PlayerController : MonoBehaviour
 
     void CountAttacks()
     {
-        if(numberOfClicks < 3)
+        if (!canAttack) return;
+
+        if (numberOfClicks < 4)// && canAttack)
+        {
+            //canAttack = true;
             numberOfClicks++;
-        //float newWaitTimer = 0;
+        }
+        else 
+        { 
+            canAttack = false;
+            StartCoroutine(DelayAttack(1.05f + (1.05f * 0.1f) + delayAttackTimer));
+        }
 
-        //for (int i = 0; i < numberOfClicks; i++)
-        //{
-        //    switch (i)
-        //    {
-        //        case 1:
-        //            newWaitTimer = 0.2f;
-        //            break;
-        //        case 2:
-        //            newWaitTimer = 0.27f;
-        //            break;
-        //        case 3:
-        //            newWaitTimer = 0.35f;
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
-
-        SetAttackTimer(numberOfClicks < 3 ? 0.65f - (0.65f * 0.25f) : 0.9f);
+        SetAttackTimer(numberOfClicks < 3 ? 0.65f : 1.05f + (1.05f * 0.1f));
         //print("Attack n. " + numberOfClicks.ToString() + " performed");
     }
 
     void SetAttackTimer(float newTime)
     {
+        if (numberOfClicks > 3) return;
         attackTimer = newTime;
+    }
+
+    IEnumerator DelayAttack(float timer)
+    {
+        yield return new WaitForSeconds(timer);
+
+        canAttack = true;
     }
 
     #region Enable Disable Input System
