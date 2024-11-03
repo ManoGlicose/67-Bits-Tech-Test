@@ -82,8 +82,9 @@ public class PlayerController : MonoBehaviour
             {
                 transform.rotation = Quaternion.Euler(0, angle, 0);
                 controller.Move(moveDirection.normalized * actualSpeed * Time.deltaTime);
-                controller.Move(velocity * Time.deltaTime);
             }
+
+            controller.Move(velocity * Time.deltaTime);
         }
 
         #endregion
@@ -156,9 +157,12 @@ public class PlayerController : MonoBehaviour
 
         foreach (Collider item in hitEnemies)
         {
-            print("Enemy attacked");
-            PlayerValues thisValue = item.GetComponentInParent<PlayerValues>();
-            thisValue.Damage(thisAttack.attackDamage);
+            if (item != null)
+            {
+                //print(item.name + " attacked with " + thisAttack.attackPoint.name);
+                PlayerValues thisValue = item.GetComponentInParent<PlayerValues>();
+                thisValue.Damage(thisAttack.attackDamage, 0.2f);
+            }
         }
     }
 
