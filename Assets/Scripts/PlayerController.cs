@@ -22,12 +22,11 @@ public class PlayerController : MonoBehaviour
     float turnSmoothVelocity;
 
     // Attacks (my own system)
-    public bool canMove = true;
-    public bool canAttack = true;
+    bool canMove = true;
+    bool canAttack = true;
     int numberOfClicks = 0;
 
     float attackTimer = 0;
-    public float delayAttackTimer = 0.5f;
 
     private void Awake()
     {
@@ -81,22 +80,22 @@ public class PlayerController : MonoBehaviour
             attackTimer = 0;
             numberOfClicks = 0;
 
-            if(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") || animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
-            {
-                canAttack = true;
-                canMove = true;
-            }
         }
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") || animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+        {
+            canAttack = true;
+            canMove = true;
+        }
+        else
+            canMove = false;
 
         HandleAnimations();
     }
 
     void HandleAnimations()
     {
-        //print(inputDirection.magnitude);
         animator.SetFloat("Speed", inputDirection.magnitude);
-
-        //if (numberOfClicks >= 3 && attackTimer > 0) return;
 
         switch (numberOfClicks)
         {
@@ -123,23 +122,17 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("Hit3", false);
                 break;
         }
-
-        //animator.SetInteger("Hits", numberOfClicks);
     }
 
     void CountAttacks()
     {
         if (!canAttack) return;
 
-        if (numberOfClicks < 3)// && canAttack)
+        if (numberOfClicks < 3)
         {
-            //canAttack = true;
             numberOfClicks++;
-            canMove = false;
+            SetAttackTimer(numberOfClicks < 3 ? 0.5f : 1f);
         }
-
-        SetAttackTimer(numberOfClicks < 3 ? 0.25f : 1.05f - (1.05f * 0.1f));
-        //print("Attack n. " + numberOfClicks.ToString() + " performed");
     }
 
     void SetAttackTimer(float newTime)
@@ -151,7 +144,6 @@ public class PlayerController : MonoBehaviour
     public void SetCanAttack(bool value)
     {
         canAttack = value;
-        //canMove = value;
     }
 
     IEnumerator DelayAttack(float timer)
