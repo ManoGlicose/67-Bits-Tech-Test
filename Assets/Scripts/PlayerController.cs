@@ -12,9 +12,16 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
     Camera mainCamera;
 
-    // Values
-    [Header("Values")]
+    // Movement
+    [Header("Movement")]
     public float speed = 6;
+    // Gravity
+    public float gravity = -9.81f;
+    Vector3 velocity;
+    float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    bool isGrounded;
 
     Vector2 inputDirection;
     Vector3 direction;
@@ -22,6 +29,9 @@ public class PlayerController : MonoBehaviour
     float turnSmoothVelocity;
 
     // Attacks (my own system)
+    [Header("Attack")]
+    public List<Attacks> attackPoints = new List<Attacks>();
+    public LayerMask enemyMask;
     bool canMove = true;
     bool canAttack = true;
     int numberOfClicks = 0;
@@ -45,10 +55,17 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #region Move and Rotate
+
+        isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
+
+        if(isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
         inputDirection = controls.Controls.Move.ReadValue<Vector2>();
         direction = new Vector3(inputDirection.x, 0, inputDirection.y).normalized;
-
-        #region Move and Rotate
 
         if (direction.magnitude > 0.1f)
         {
@@ -59,14 +76,19 @@ public class PlayerController : MonoBehaviour
 
             Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
 
+            velocity.y += gravity * Time.deltaTime;
+
             if (canMove)
             {
                 transform.rotation = Quaternion.Euler(0, angle, 0);
                 controller.Move(moveDirection.normalized * actualSpeed * Time.deltaTime);
+                controller.Move(velocity * Time.deltaTime);
             }
         }
 
         #endregion
+
+        #region Attack controls
 
         if (attackTimer > 0)
         {
@@ -89,6 +111,8 @@ public class PlayerController : MonoBehaviour
         }
         else
             canMove = false;
+
+        #endregion
 
         HandleAnimations();
     }
@@ -121,6 +145,20 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("Hit2", false);
                 animator.SetBool("Hit3", false);
                 break;
+        }
+    }
+
+    public void Attack(int attackIndex)
+    {
+        Attacks thisAttack = attackPoints[attackIndex];
+
+        Collider[] hitEnemies = Physics.OverlapSphere(thisAttack.attackPoint.position, thisAttack.attackRange, enemyMask);
+
+        foreach (Collider item in hitEnemies)
+        {
+            print("Enemy attacked");
+            PlayerValues thisValue = item.GetComponentInParent<PlayerValues>();
+            thisValue.Damage(thisAttack.attackDamage);
         }
     }
 
@@ -163,4 +201,12 @@ public class PlayerController : MonoBehaviour
         controls.Disable();
     }
     #endregion
+}
+
+[System.Serializable]
+public class Attacks
+{
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public int attackDamage = 10;
 }
