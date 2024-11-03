@@ -22,7 +22,8 @@ public class PlayerController : MonoBehaviour
     float turnSmoothVelocity;
 
     // Attacks (my own system)
-    bool canAttack = true;
+    public bool canMove = true;
+    public bool canAttack = true;
     int numberOfClicks = 0;
 
     float attackTimer = 0;
@@ -59,7 +60,7 @@ public class PlayerController : MonoBehaviour
 
             Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
 
-            if (attackTimer <= 0)
+            if (canMove)
             {
                 transform.rotation = Quaternion.Euler(0, angle, 0);
                 controller.Move(moveDirection.normalized * actualSpeed * Time.deltaTime);
@@ -74,9 +75,17 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if(numberOfClicks > 0)
+                canAttack = false;
+
             attackTimer = 0;
             numberOfClicks = 0;
-            //canAttack = true;
+
+            if(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") || animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+            {
+                canAttack = true;
+                canMove = true;
+            }
         }
 
         HandleAnimations();
@@ -122,18 +131,14 @@ public class PlayerController : MonoBehaviour
     {
         if (!canAttack) return;
 
-        if (numberOfClicks < 4)// && canAttack)
+        if (numberOfClicks < 3)// && canAttack)
         {
             //canAttack = true;
             numberOfClicks++;
-        }
-        else 
-        { 
-            canAttack = false;
-            StartCoroutine(DelayAttack(1.05f + (1.05f * 0.1f) + delayAttackTimer));
+            canMove = false;
         }
 
-        SetAttackTimer(numberOfClicks < 3 ? 0.65f : 1.05f + (1.05f * 0.1f));
+        SetAttackTimer(numberOfClicks < 3 ? 0.25f : 1.05f - (1.05f * 0.1f));
         //print("Attack n. " + numberOfClicks.ToString() + " performed");
     }
 
@@ -143,11 +148,16 @@ public class PlayerController : MonoBehaviour
         attackTimer = newTime;
     }
 
+    public void SetCanAttack(bool value)
+    {
+        canAttack = value;
+        //canMove = value;
+    }
+
     IEnumerator DelayAttack(float timer)
     {
         yield return new WaitForSeconds(timer);
 
-        canAttack = true;
     }
 
     #region Enable Disable Input System
