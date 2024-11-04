@@ -7,6 +7,7 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Components")]
     public CharacterController controller;
     public Animator animator;
+    PlayerValues health;
 
     [Header("AI")]
     public Transform target;
@@ -23,7 +24,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     bool isGrounded;
 
-    Vector2 inputDirection;
+    //Vector2 inputDirection;
     Vector3 direction;
     float turnSmoothTime = 15f;
     float turnSmoothVelocity;
@@ -35,17 +36,22 @@ public class EnemyBehaviour : MonoBehaviour
     bool canAttack = true;
     //int numberOfClicks = 0;
 
-    float attackTimer = 0;
+    //float attackTimer = 0;
+
+    [Header("Death")]
+    public Collider collectTrigger;
+    bool hasDied;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        health = GetComponent<PlayerValues>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (hasDied) return;
         #region Movement
 
         isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
@@ -58,11 +64,14 @@ public class EnemyBehaviour : MonoBehaviour
         Move();
 
         #endregion
+
+        hasDied = health.HasDied();
     }
 
     void Move()
     {
         if (!target) return;
+
         direction = (target.position - transform.position);
         float distance = Vector3.Distance(transform.position, target.position);
 
@@ -126,5 +135,21 @@ public class EnemyBehaviour : MonoBehaviour
                 thisValue.Damage(thisAttack.attackDamage, 1.5f);
             }
         }
+    }
+
+    public void Death()
+    {
+        if (hasDied) return;
+
+        StartCoroutine(CollectDelay(3));
+        hasDied = true;
+    }
+
+    IEnumerator CollectDelay(float timer)
+    {
+        yield return new WaitForSeconds(timer);
+
+        collectTrigger.enabled = true;
+        // Make collider available
     }
 }

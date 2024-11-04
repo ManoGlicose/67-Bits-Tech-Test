@@ -14,6 +14,11 @@ public class PlayerValues : MonoBehaviour
     bool hasDied = false;
     bool canBeDamaged = true;
 
+    public bool HasDied()
+    {
+        return hasDied;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,8 +67,12 @@ public class PlayerValues : MonoBehaviour
         if (gameObject.CompareTag("Player"))
             GetComponent<PlayerController>().enabled = false;
         else if (gameObject.CompareTag("Enemy"))
-            GetComponent<EnemyBehaviour>().enabled = false;
+        {
+            EnemyBehaviour enemy = GetComponent<EnemyBehaviour>();
+            enemy.Death();
+        }
 
+        GetComponent<CharacterController>().enabled = false;
         GetComponent<Animator>().enabled = false;
 
         hasDied = true;
