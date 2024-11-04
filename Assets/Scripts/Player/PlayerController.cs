@@ -36,7 +36,17 @@ public class PlayerController : MonoBehaviour
     bool canAttack = true;
     int numberOfClicks = 0;
 
+    [Header("Bodies")]
+    public BodyStacking stack;
+    [Range(0, 45)]
+    public float stackMaxTilt = 45;
+
     float attackTimer = 0;
+
+    [Header("Debug")]
+    public float actualVelocity;
+    Vector3 vectorVelocity;
+    public Transform directionIndicator;
 
     private void Awake()
     {
@@ -59,7 +69,7 @@ public class PlayerController : MonoBehaviour
 
         isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
 
-        if(isGrounded && velocity.y < 0)
+        if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
         }
@@ -84,8 +94,14 @@ public class PlayerController : MonoBehaviour
                 controller.Move(moveDirection.normalized * actualSpeed * Time.deltaTime);
             }
 
-            controller.Move(velocity * Time.deltaTime);
         }
+        actualVelocity = controller.velocity.magnitude;
+        vectorVelocity = controller.velocity;
+        controller.Move(velocity * Time.deltaTime);
+
+        Quaternion directionRotation = Quaternion.Euler(Mathf.Lerp(0, -stackMaxTilt, actualVelocity / speed) + 90, 0, 90);
+
+        directionIndicator.localRotation = Quaternion.Lerp(directionIndicator.localRotation, directionRotation, turnSmoothTime * Time.deltaTime);
 
         #endregion
 
@@ -97,7 +113,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if(numberOfClicks > 0)
+            if (numberOfClicks > 0)
                 canAttack = false;
 
             attackTimer = 0;
@@ -116,6 +132,8 @@ public class PlayerController : MonoBehaviour
         #endregion
 
         HandleAnimations();
+
+        //print(PlayerVelocity());
     }
 
     void HandleAnimations()
@@ -186,6 +204,25 @@ public class PlayerController : MonoBehaviour
     public void SetCanAttack(bool value)
     {
         canAttack = value;
+    }
+
+    public BodyStacking GetBodyStack()
+    {
+        return stack;
+    }
+
+    public float PlayerVelocity()
+    {
+        Vector3 lastPosition = Vector3.zero;
+        float velocity = Vector3.Distance(transform.position, lastPosition) / Time.deltaTime;
+        lastPosition = transform.position;
+
+        return velocity;
+    }
+
+    void MoveBodyStack()
+    {
+
     }
 
     IEnumerator DelayAttack(float timer)

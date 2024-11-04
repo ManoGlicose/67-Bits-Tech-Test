@@ -41,6 +41,7 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Death")]
     public Collider collectTrigger;
     bool hasDied;
+    public Transform hips;
 
     // Start is called before the first frame update
     void Start()
@@ -151,5 +152,16 @@ public class EnemyBehaviour : MonoBehaviour
 
         collectTrigger.enabled = true;
         // Make collider available
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!hasDied) return;
+        if (other.CompareTag("Player"))
+        {
+            // Add body to stack
+            hips.GetComponent<Rigidbody>().isKinematic = true;
+            other.GetComponent<PlayerController>().GetBodyStack().AddBodyToPile(hips);
+        }
     }
 }
