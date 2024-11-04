@@ -9,6 +9,8 @@ public class BodyStacking : MonoBehaviour
     //public Transform target;
     //public Transform lookTarget;
     //public float followRate;
+    Transform target;
+    public DeliverGround deliverGround;
 
     public List<Transform> bodies = new List<Transform>();
 
@@ -21,6 +23,8 @@ public class BodyStacking : MonoBehaviour
     {
         //if (bodies.Count > 0)
         //    bodies[0].transform.position = new Vector3(transform.position.x, transform.position.y + offset, transform.position.z);
+
+        target = transform;
 
         for (int i = 0; i < bodies.Count; i++)
         {
@@ -38,7 +42,9 @@ public class BodyStacking : MonoBehaviour
     public void AddBodyToPile(Transform body)
     {
         //body.eulerAngles = new Vector3(90, 0, 90);
-        if(!bodies.Contains(body))
+        if (bodies.Count >= player.GetPlayerValues().maxBodiesToCarry) return;
+
+        if (!bodies.Contains(body))
             bodies.Add(body);
     }
 
@@ -55,11 +61,26 @@ public class BodyStacking : MonoBehaviour
             //bodies[0].transform.position = Vector3.Lerp(bodies[0].position, transform.position, rate);
             //bodies[0].rotation = Quaternion.Lerp(bodies[0].rotation, transform.GetChild(0).rotation, rate);
 
-            bodies[i].position = Vector3.Lerp(bodies[i].position, i > 0 ? bodies[i - 1].position + (-bodies[i - 1].forward * offset) : transform.position, rate);
-            bodies[i].rotation = Quaternion.Lerp(bodies[i].rotation, i > 0 ? bodies[i - 1].rotation : transform.GetChild(0).rotation, rate);
+            bodies[i].position = Vector3.Lerp(bodies[i].position, i > 0 ? bodies[i - 1].position + (-bodies[i - 1].forward * offset) : target.position, rate);
+            bodies[i].rotation = Quaternion.Lerp(bodies[i].rotation, i > 0 ? bodies[i - 1].rotation : target.GetChild(0).rotation, rate);
 
             //Vector3 look = i > 0 ? new Vector3(bodies[i - 1].transform.position.x, bodies[i].transform.position.y, bodies[i].transform.position.z) : new Vector3(transform.position.x, bodies[i].transform.position.y, bodies[i].transform.position.z);
             //bodies[i].LookAt(look);
         }
+    }
+
+    public void ThrowBodies()
+    {
+        if (bodies.Count <= 0 || !deliverGround) return;
+
+        target = deliverGround.deliverPoint;
+        deliverGround.DeliverBodies(bodies);
+
+        //bodies.Clear();
+    }
+
+    public void ClearBodyCount()
+    {
+        bodies.Clear();
     }
 }

@@ -45,8 +45,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Debug")]
     public float actualVelocity;
-    Vector3 vectorVelocity;
-    public Transform directionIndicator;
+    public Transform bodyStack;
 
     private void Awake()
     {
@@ -54,6 +53,7 @@ public class PlayerController : MonoBehaviour
         mainCamera = Camera.main;
 
         controls.Controls.Attack.performed += ctx => CountAttacks();
+        controls.Controls.Throw.performed += ctx => GetBodyStack().ThrowBodies();
     }
 
     // Start is called before the first frame update
@@ -96,12 +96,11 @@ public class PlayerController : MonoBehaviour
 
         }
         actualVelocity = controller.velocity.magnitude;
-        vectorVelocity = controller.velocity;
         controller.Move(velocity * Time.deltaTime);
 
         Quaternion directionRotation = Quaternion.Euler(Mathf.Lerp(0, -stackMaxTilt, actualVelocity / speed) + 90, 0, 90);
 
-        directionIndicator.localRotation = Quaternion.Lerp(directionIndicator.localRotation, directionRotation, turnSmoothTime * Time.deltaTime);
+        bodyStack.localRotation = Quaternion.Lerp(bodyStack.localRotation, directionRotation, turnSmoothTime * Time.deltaTime);
 
         #endregion
 
@@ -127,13 +126,16 @@ public class PlayerController : MonoBehaviour
             canMove = true;
         }
         else
+        {
             canMove = false;
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Stomach Hit") || animator.GetCurrentAnimatorStateInfo(0).IsName("Head Hit"))
+                canAttack = false;
+        }
 
         #endregion
 
         HandleAnimations();
-
-        //print(PlayerVelocity());
     }
 
     void HandleAnimations()
@@ -211,18 +213,9 @@ public class PlayerController : MonoBehaviour
         return stack;
     }
 
-    public float PlayerVelocity()
+    public PlayerValues GetPlayerValues()
     {
-        Vector3 lastPosition = Vector3.zero;
-        float velocity = Vector3.Distance(transform.position, lastPosition) / Time.deltaTime;
-        lastPosition = transform.position;
-
-        return velocity;
-    }
-
-    void MoveBodyStack()
-    {
-
+        return GetComponent<PlayerValues>();
     }
 
     IEnumerator DelayAttack(float timer)

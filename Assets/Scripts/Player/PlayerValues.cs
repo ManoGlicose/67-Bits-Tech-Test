@@ -11,6 +11,9 @@ public class PlayerValues : MonoBehaviour
     public int maxHealth = 100;
     int health = 100;
 
+    [Header("Weight")]
+    public int maxBodiesToCarry = 2;
+
     bool hasDied = false;
     bool canBeDamaged = true;
 
