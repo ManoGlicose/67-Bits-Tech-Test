@@ -34,6 +34,9 @@ public class DeliverGround : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            int allMoney = 0;
+            int moneyMultiplier = 1;
+
             BodyStacking playerStack = other.GetComponentInChildren<BodyStacking>();
             if (playerStack.bodies.Count > 0)
             {
@@ -44,13 +47,17 @@ public class DeliverGround : MonoBehaviour
             {
                 for (int i = 0; i < bodies.Count; i++)
                 {
+                    allMoney += bodies[i].GetComponentInParent<EnemyBehaviour>().myCost;
                     Destroy(bodies[i].parent.gameObject);
                 }
+
+                moneyMultiplier = bodies.Count;
+                other.GetComponent<PlayerValues>().AddMoney(allMoney * moneyMultiplier);
+
                 bodies.Clear();
             }
 
-            // Sell bodies
-            playerStack.deliverGround = null;
+            playerStack.ClearDelivery();
         }
     }
 

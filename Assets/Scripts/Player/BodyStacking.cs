@@ -83,4 +83,10 @@ public class BodyStacking : MonoBehaviour
     {
         bodies.Clear();
     }
+
+    public void ClearDelivery()
+    {
+        target = transform;
+        deliverGround = null;
+    }
 }

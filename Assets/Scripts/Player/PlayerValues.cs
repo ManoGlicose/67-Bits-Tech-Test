@@ -17,6 +17,9 @@ public class PlayerValues : MonoBehaviour
     bool hasDied = false;
     bool canBeDamaged = true;
 
+    [Header("Money")]
+    public int money;
+
     public bool HasDied()
     {
         return hasDied;
@@ -86,5 +89,10 @@ public class PlayerValues : MonoBehaviour
         yield return new WaitForSeconds(timer);
 
         canBeDamaged = true;
+    }
+
+    public void AddMoney(int newMoney)
+    {
+        money += newMoney;
     }
 }

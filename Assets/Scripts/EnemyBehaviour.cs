@@ -43,6 +43,9 @@ public class EnemyBehaviour : MonoBehaviour
     bool hasDied;
     public Transform hips;
 
+    [Header("Value")]
+    public int myCost = 10;
+
     // Start is called before the first frame update
     void Start()
     {
