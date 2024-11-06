@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask enemyMask;
     bool canMove = true;
     bool canAttack = true;
+    bool beingDamaged = false;
     int numberOfClicks = 0;
 
     [Header("Bodies")]
@@ -124,6 +125,7 @@ public class PlayerController : MonoBehaviour
         {
             canAttack = true;
             canMove = true;
+            //beingDamaged = false;
         }
         else
         {
@@ -222,6 +224,16 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(timer);
 
+    }
+
+    public bool IsBeingDamaged()
+    {
+        return beingDamaged;
+    }
+
+    public void SetBeingDamaged(bool value)
+    {
+        beingDamaged = value;
     }
 
     #region Enable Disable Input System

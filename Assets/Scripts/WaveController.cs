@@ -95,7 +95,8 @@ public class WaveController : MonoBehaviour
         if(waveHealth < 100)
             waveHealth += 10;
 
-        ringSize += 0.25f;
+        if(ringSize < 2.5f)
+            ringSize += 0.25f;
 
         int currentSpawnPoint = 0;
 

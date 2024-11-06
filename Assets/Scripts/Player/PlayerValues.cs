@@ -56,6 +56,11 @@ public class PlayerValues : MonoBehaviour
         canBeDamaged = false;
         GetComponent<Animator>().SetTrigger(damage > 20 ? "Heavy Hit" : "Light Hit");
 
+        if (GetComponent<PlayerController>())
+        {
+            GetComponent<PlayerController>().SetBeingDamaged(true);
+        }
+
         StartCoroutine(DamageDelay(damageDelay));
     }
 
@@ -94,6 +99,10 @@ public class PlayerValues : MonoBehaviour
         yield return new WaitForSeconds(timer);
 
         canBeDamaged = true;
+        if (GetComponent<PlayerController>())
+        {
+            GetComponent<PlayerController>().SetBeingDamaged(false);
+        }
     }
 
     public void AddMoney(int newMoney)
