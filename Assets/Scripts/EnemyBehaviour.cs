@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyBehaviour : MonoBehaviour
 {
@@ -46,6 +47,11 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Value")]
     public int myCost = 10;
 
+    [Header("UI")]
+    public Transform canvas;
+    public Image healthBar;
+    public Image damageBar;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -69,7 +75,13 @@ public class EnemyBehaviour : MonoBehaviour
 
         #endregion
 
+
         hasDied = health.HasDied();
+    }
+
+    private void LateUpdate()
+    {
+        HandleUI();
     }
 
     public void SetParameters(Transform newTarget, float newHealth)
@@ -122,6 +134,17 @@ public class EnemyBehaviour : MonoBehaviour
             canMove = false;
     }
 
+    void HandleUI()
+    {
+        float thisHealth = (float)(health.GetHealth() / health.maxHealth);
+        if (!canMove)
+            damageBar.fillAmount = Mathf.Lerp(damageBar.fillAmount, healthBar.fillAmount, 5 * Time.deltaTime);
+
+        healthBar.fillAmount = thisHealth;
+
+        canvas.LookAt(Camera.main.transform, Vector3.up);
+    }
+
     void AttackPlayer()
     {
         if (!canAttack) return;
@@ -161,6 +184,7 @@ public class EnemyBehaviour : MonoBehaviour
         yield return new WaitForSeconds(timer);
 
         collectTrigger.enabled = true;
+        canvas.gameObject.SetActive(false);
         // Make collider available
     }
 

@@ -25,6 +25,17 @@ public class DeliverGround : MonoBehaviour
         transform.parent.position = new Vector3(pivotPoint.position.x, 0.01f, pivotPoint.position.z);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            BodyStacking playerStack = other.GetComponentInChildren<BodyStacking>();
+            playerStack.deliverGround = this;
+
+            playerStack.ThrowBodies();
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player"))
