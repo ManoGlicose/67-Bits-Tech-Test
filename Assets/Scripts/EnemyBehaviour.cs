@@ -47,7 +47,7 @@ public class EnemyBehaviour : MonoBehaviour
     public int myCost = 10;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         health = GetComponent<PlayerValues>();
     }
@@ -70,6 +70,12 @@ public class EnemyBehaviour : MonoBehaviour
         #endregion
 
         hasDied = health.HasDied();
+    }
+
+    public void SetParameters(Transform newTarget, float newHealth)
+    {
+        target = newTarget;
+        health.maxHealth = newHealth;
     }
 
     void Move()
@@ -145,6 +151,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (hasDied) return;
 
+        FindFirstObjectByType<WaveController>().KillEnemy();
         StartCoroutine(CollectDelay(3));
         hasDied = true;
     }
@@ -155,6 +162,11 @@ public class EnemyBehaviour : MonoBehaviour
 
         collectTrigger.enabled = true;
         // Make collider available
+    }
+
+    public PlayerValues GetHealth()
+    {
+        return health;
     }
 
     private void OnTriggerEnter(Collider other)

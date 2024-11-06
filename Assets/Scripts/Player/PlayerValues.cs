@@ -8,8 +8,8 @@ public class PlayerValues : MonoBehaviour
 
     [Header("Health")]
     [Range(0, 100)]
-    public int maxHealth = 100;
-    int health = 100;
+    public float maxHealth = 100;
+    float health = 100;
 
     [Header("Weight")]
     public int maxBodiesToCarry = 2;
@@ -82,6 +82,11 @@ public class PlayerValues : MonoBehaviour
         GetComponent<Animator>().enabled = false;
 
         hasDied = true;
+    }
+
+    public float GetHealth()
+    {
+        return health;
     }
 
     IEnumerator DamageDelay(float timer)
