@@ -8,6 +8,7 @@ public class DeliverGround : MonoBehaviour
     public Transform deliverPoint;
     public List<Transform> bodies = new List<Transform>();
 
+    public Transform pivotPoint;
 
     // Start is called before the first frame update
     void Start()
@@ -18,7 +19,7 @@ public class DeliverGround : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        transform.parent.position = new Vector3(pivotPoint.position.x, 0.01f, pivotPoint.position.z);
     }
 
     private void OnTriggerStay(Collider other)
