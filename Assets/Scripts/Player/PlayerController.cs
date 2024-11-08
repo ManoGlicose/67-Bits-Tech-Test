@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     public CharacterController controller;
     PlayerActions controls;
+    public JoystickController joystick;
     public Animator animator;
     Camera mainCamera;
     PlayerValues values;
@@ -80,7 +81,8 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f;
         }
 
-        inputDirection = controls.Controls.Move.ReadValue<Vector2>();
+        //inputDirection = controls.Controls.Move.ReadValue<Vector2>();
+        inputDirection = joystick.MovementVector();
         direction = new Vector3(inputDirection.x, 0, inputDirection.y).normalized;
 
         if (direction.magnitude > 0.1f)
@@ -193,7 +195,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void CountAttacks()
+    public void CountAttacks()
     {
         if (!canAttack) return;
 
