@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     PlayerActions controls;
     public Animator animator;
     Camera mainCamera;
+    PlayerValues values;
 
     // Movement
     [Header("Movement")]
@@ -48,13 +49,17 @@ public class PlayerController : MonoBehaviour
     public float actualVelocity;
     public Transform bodyStack;
 
+    public List<Material> playerColors = new List<Material>();
+
     private void Awake()
     {
         controls = new PlayerActions();
         mainCamera = Camera.main;
+        values = GetComponent<PlayerValues>();
 
         controls.Controls.Attack.performed += ctx => CountAttacks();
-        controls.Controls.Throw.performed += ctx => GetBodyStack().ThrowBodies();
+        //controls.Controls.Throw.performed += ctx => GetBodyStack().ThrowBodies();
+        controls.Controls.Pause.performed += ctx => FindFirstObjectByType<HUDController>().PauseGame();
     }
 
     // Start is called before the first frame update
@@ -183,7 +188,7 @@ public class PlayerController : MonoBehaviour
             {
                 //print(item.name + " attacked with " + thisAttack.attackPoint.name);
                 PlayerValues thisValue = item.GetComponentInParent<PlayerValues>();
-                thisValue.Damage(thisAttack.attackDamage, 0.2f);
+                thisValue.Damage(Mathf.RoundToInt(thisAttack.attackDamage * values.GetStrength()), 0.2f);
             }
         }
     }
@@ -234,6 +239,11 @@ public class PlayerController : MonoBehaviour
     public void SetBeingDamaged(bool value)
     {
         beingDamaged = value;
+    }
+
+    public void SetPlayerColor(int index)
+    {
+        GetComponentInChildren<SkinnedMeshRenderer>().material = playerColors[index];
     }
 
     #region Enable Disable Input System

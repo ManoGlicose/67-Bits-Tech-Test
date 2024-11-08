@@ -20,6 +20,10 @@ public class PlayerValues : MonoBehaviour
     [Header("Money")]
     public int money;
 
+    [Header("Data Values")]
+    float strength;
+    int maxBodies;
+
     public bool HasDied()
     {
         return hasDied;
@@ -29,6 +33,11 @@ public class PlayerValues : MonoBehaviour
     void Start()
     {
         Rigidbody[] rb = GetComponentsInChildren<Rigidbody>();
+
+        if (gameObject.CompareTag("Player"))
+        {
+            LoadGameValues();
+        }
 
         health = maxHealth;
 
@@ -45,6 +54,11 @@ public class PlayerValues : MonoBehaviour
         {
             if (!hasDied)
                 Death();
+        }
+
+        if (hasDied && gameObject.CompareTag("Player"))
+        {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 40, 5 * Time.deltaTime);
         }
     }
 
@@ -76,7 +90,12 @@ public class PlayerValues : MonoBehaviour
         }
 
         if (gameObject.CompareTag("Player"))
+        {
             GetComponent<PlayerController>().enabled = false;
+            FindFirstObjectByType<HUDController>().GameOver();
+            GameController.Instance.SaveData(money);
+            // Control camera zoom
+        }
         else if (gameObject.CompareTag("Enemy"))
         {
             EnemyBehaviour enemy = GetComponent<EnemyBehaviour>();
@@ -86,12 +105,29 @@ public class PlayerValues : MonoBehaviour
         GetComponent<CharacterController>().enabled = false;
         GetComponent<Animator>().enabled = false;
 
+        
+
         hasDied = true;
     }
 
     public float GetHealth()
     {
         return health;
+    }
+
+    public float GetStrength()
+    {
+        return strength;
+    }
+
+    public void LoadGameValues()
+    {
+        if (!gameObject.CompareTag("Player")) return;
+
+        GameController.Instance.LoadData();
+        strength = GameController.Instance.GetStrengthLevel();
+        maxBodiesToCarry = GameController.Instance.GetMaxBodies();
+        FindFirstObjectByType<PlayerController>().SetPlayerColor(GameController.Instance.GetCurrentColorIndex());
     }
 
     IEnumerator DamageDelay(float timer)

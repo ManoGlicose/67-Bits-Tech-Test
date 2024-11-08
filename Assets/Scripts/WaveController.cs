@@ -27,17 +27,28 @@ public class WaveController : MonoBehaviour
     int remainingEnemies = 0;
     float waveHealth = 40;
 
+    bool startGame = false;
+
     // Start is called before the first frame update
     void Start()
     {
         player = FindFirstObjectByType<PlayerController>().transform;
         gateTarget = gatePivots[0];
+        //StartWave();
+    }
+
+    public IEnumerator StartFirstWave()
+    {
+        yield return new WaitForSeconds(2f);
+        startGame = true;
         StartWave();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!GameController.Instance.GameHasStarted() || !startGame) return;
+
         ringPivots.localScale = new Vector3(ringSize, 1, ringSize);
         gate.position = Vector3.Lerp(gate.position, gateTarget.position, (lerpTime / 2) * Time.deltaTime);
 
@@ -64,12 +75,14 @@ public class WaveController : MonoBehaviour
             enemies.Add(newEnemy);
     }
 
-    void StartWave()
+    public void StartWave()
     {
+        if (!GameController.Instance.GameHasStarted()) return;
+
         currentWave = 1;
         remainingEnemies = 0;
         enemiesAmount = 2;
-        waveHealth = 40;
+        waveHealth = 20;
 
         ringSize = 1;
 

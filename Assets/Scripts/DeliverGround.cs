@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class DeliverGround : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class DeliverGround : MonoBehaviour
     public List<Transform> bodies = new List<Transform>();
 
     public Transform pivotPoint;
+
+    [Header("UI")]
+    public CoinIndicationController coinText;
+
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +79,8 @@ public class DeliverGround : MonoBehaviour
                 moneyMultiplier = bodies.Count;
                 other.GetComponent<PlayerValues>().AddMoney(allMoney * moneyMultiplier);
 
+                ShowValueSpent(new Vector3(other.transform.position.x, other.transform.position.y + 3, other.transform.position.z), allMoney, moneyMultiplier);
+
                 waveController.CheckClearWave(bodies.Count);
                 bodies.Clear();
             }
@@ -81,6 +88,12 @@ public class DeliverGround : MonoBehaviour
             //waveController.NextWave();
             playerStack.ClearDelivery();
         }
+    }
+
+    void ShowValueSpent(Vector3 position, int money, int multiplier)
+    {
+        GameObject valueText = Instantiate(coinText.gameObject, position, transform.rotation, null);
+        valueText.GetComponent<CoinIndicationController>().SetText(money, multiplier);
     }
 
     public void DeliverBodies(List<Transform> newBodies)
