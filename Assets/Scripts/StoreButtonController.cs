@@ -23,12 +23,16 @@ public class StoreButtonController : MonoBehaviour
     [Header("UI")]
     public TMP_Text nameText;
     public TMP_Text costText;
+    Image costIcon;
+    Color32 iconOriginalColor;
     public TMP_Text levelText;
     public Image buyBar;
 
     // Start is called before the first frame update
     void Start()
     {
+        costIcon = costText.GetComponentInParent<Image>();
+        iconOriginalColor = costIcon.color;
         GetAcquiredProduct();
     }
 
@@ -153,7 +157,16 @@ public class StoreButtonController : MonoBehaviour
     public void BuyProduct()
     {
         // Deduct money
-        if (GameController.Instance.CurrentMoney() < cost && !acquired) return;
+        if (GameController.Instance.CurrentMoney() < cost && !acquired) 
+        {
+            if (GameController.Instance.CurrentMoney() < cost)
+            {
+                StopCoroutine(NotEnoughCash());
+                StartCoroutine(NotEnoughCash());
+            }
+
+            return; 
+        }
 
         if (!acquired)
             GameController.Instance.AddSpendMoney(-cost);
@@ -247,5 +260,15 @@ public class StoreButtonController : MonoBehaviour
         }
 
         GameController.Instance.SaveData();
+    }
+    IEnumerator NotEnoughCash()
+    {
+        costIcon.color = Color.red;
+        costText.color = Color.red;
+
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        costIcon.color = iconOriginalColor;
+        costText.color = iconOriginalColor;
     }
 }
