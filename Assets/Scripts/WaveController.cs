@@ -45,7 +45,7 @@ public class WaveController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!GameController.Instance.GameHasStarted() || !startGame) return;
 

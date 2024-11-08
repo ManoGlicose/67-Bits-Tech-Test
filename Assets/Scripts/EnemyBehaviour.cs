@@ -27,7 +27,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     //Vector2 inputDirection;
     Vector3 direction;
-    float turnSmoothTime = 15f;
+    float turnSmoothTime = 7.5f;
     float turnSmoothVelocity;
 
     [Header("Attack")]
@@ -59,7 +59,7 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (hasDied) return;
         #region Movement

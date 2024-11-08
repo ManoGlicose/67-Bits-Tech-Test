@@ -23,12 +23,7 @@ public class CameraController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if (GameController.Instance.GameHasStarted())
         {

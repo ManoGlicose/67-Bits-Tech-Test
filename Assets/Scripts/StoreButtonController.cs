@@ -9,7 +9,7 @@ public class StoreButtonController : MonoBehaviour
 {
     public enum ProductType
     {
-        STRENGTH, BODIES, BLUE, GREEN, RED, PINK, YELLOW, BLACK
+        STRENGTH, BODIES, BLUE, GREEN, RED, PINK, YELLOW, BLACK, COINS
     };
     public ProductType productType;
 
@@ -80,6 +80,9 @@ public class StoreButtonController : MonoBehaviour
             case ProductType.BLACK:
                 text = "Change your color to " + productType.ToString();
                 break;
+            case ProductType.COINS:
+                text = "Dev only: Get more 9999 COINS";
+                break;
             default:
                 text = "[LEVEL: 0]";
                 break;
@@ -148,6 +151,9 @@ public class StoreButtonController : MonoBehaviour
                     acquired = true;
                 else
                     acquired = false;
+                break;
+            case ProductType.COINS:
+                acquired = false;
                 break;
             default:
                 break;
@@ -254,6 +260,9 @@ public class StoreButtonController : MonoBehaviour
                     FindFirstObjectByType<PlayerController>().SetPlayerColor(5);
                 }
                 GameController.Instance.SetCurrentColorIndex(5);
+                break;
+            case ProductType.COINS:
+                GameController.Instance.AddSpendMoney(9999);
                 break;
             default:
                 break;

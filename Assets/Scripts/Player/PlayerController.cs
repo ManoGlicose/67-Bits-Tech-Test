@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 
     // Movement
     [Header("Movement")]
-    public float speed = 6;
+    public float speed = 3;
     // Gravity
     public float gravity = -9.81f;
     Vector3 velocity;
@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
     Vector2 inputDirection;
     Vector3 direction;
-    float turnSmoothTime = 15f;
+    float turnSmoothTime = 2.5f;
     float turnSmoothVelocity;
 
     // Attacks (my own system)
@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         #region Move and Rotate
 
@@ -90,25 +90,25 @@ public class PlayerController : MonoBehaviour
             float actualSpeed = inputDirection.magnitude > 0.6f ? speed : speed / 2;
 
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime * Time.deltaTime);
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime * Time.fixedDeltaTime);
 
             Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
 
-            velocity.y += gravity * Time.deltaTime;
+            velocity.y += gravity * Time.fixedDeltaTime;
 
             if (canMove)
             {
                 transform.rotation = Quaternion.Euler(0, angle, 0);
-                controller.Move(moveDirection.normalized * actualSpeed * Time.deltaTime);
+                controller.Move(moveDirection.normalized * actualSpeed * Time.fixedDeltaTime);
             }
 
         }
         actualVelocity = controller.velocity.magnitude;
-        controller.Move(velocity * Time.deltaTime);
+        controller.Move(velocity * Time.fixedDeltaTime);
 
         Quaternion directionRotation = Quaternion.Euler(Mathf.Lerp(0, -stackMaxTilt, actualVelocity / speed) + 90, 0, 90);
 
-        bodyStack.localRotation = Quaternion.Lerp(bodyStack.localRotation, directionRotation, turnSmoothTime * Time.deltaTime);
+        bodyStack.localRotation = Quaternion.Lerp(bodyStack.localRotation, directionRotation, turnSmoothTime * Time.fixedDeltaTime);
 
         #endregion
 
@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
 
         if (attackTimer > 0)
         {
-            attackTimer -= Time.deltaTime;
+            attackTimer -= Time.fixedDeltaTime;
         }
         else
         {

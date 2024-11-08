@@ -8,6 +8,7 @@ public class JoystickController : MonoBehaviour
 {
     public FloatingJoystick joystick;
     public Vector2 joystickSize = new Vector2(100, 100);
+    Vector2 newJoystickSize = new Vector2(100, 100);
 
     Finger movementFinger;
     Vector2 movement;
@@ -15,7 +16,12 @@ public class JoystickController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        float floatWidth = Screen.width;
+        print(floatWidth.ToString() + " / 1080 = " + floatWidth / 1080);
+        newJoystickSize = new Vector2(joystickSize.x * (floatWidth / 1080), joystickSize.y * (floatWidth / 1080));
+
+        Vector2 knobSize = joystick.knob.sizeDelta;
+        joystick.knob.sizeDelta = new Vector2(knobSize.x * (floatWidth / 1080), knobSize.y * (floatWidth / 1080));
     }
 
     // Update is called once per frame
@@ -26,36 +32,39 @@ public class JoystickController : MonoBehaviour
 
     void HandleFingerDown(Finger touchedFinger)
     {
-        if(movementFinger == null && touchedFinger.screenPosition.x <= Screen.width / 2)
+        if (!GameController.Instance.GameHasStarted()) return;
+
+        if (movementFinger == null && touchedFinger.screenPosition.x <= Screen.width / 2)
         {
             movementFinger = touchedFinger;
             movement = Vector2.zero;
             joystick.gameObject.SetActive(true);
-            joystick.rect.sizeDelta = joystickSize;
-            //joystick.rect.anchoredPosition = ClampStartPosirion(touchedFinger.screenPosition);
-            joystick.rect.anchoredPosition = touchedFinger.screenPosition;
+            joystick.rect.sizeDelta = newJoystickSize;
+            joystick.rect.anchoredPosition = ClampStartPosirion(touchedFinger.screenPosition);
         }
     }
 
     Vector2 ClampStartPosirion(Vector2 startPosition)
     {
-        if (startPosition.x < joystickSize.x / 2)
-            startPosition.x = joystickSize.x / 2;
+        if (startPosition.x < newJoystickSize.x / 2)
+            startPosition.x = newJoystickSize.x / 2;
 
-        if (startPosition.y < joystickSize.y / 2)
-            startPosition.y = joystickSize.y / 2;
-        else if (startPosition.y > Screen.height - joystickSize.y / 2)
-            startPosition.y = Screen.height - joystickSize.y / 2;
+        if (startPosition.y < newJoystickSize.y / 2)
+            startPosition.y = newJoystickSize.y / 2;
+        else if (startPosition.y > Screen.height - newJoystickSize.y / 2)
+            startPosition.y = Screen.height - newJoystickSize.y / 2;
 
         return startPosition;
     }
 
     void HandleFingerMove(Finger movedFinger)
     {
-        if(movedFinger == movementFinger)
+        if (!GameController.Instance.GameHasStarted()) return;
+
+        if (movedFinger == movementFinger)
         {
             Vector2 knobPosition;
-            float maxMovement = joystickSize.x / 2;
+            float maxMovement = newJoystickSize.x / 2;
             ETouch.Touch currentTouch = movedFinger.currentTouch;
 
             if (Vector2.Distance(currentTouch.screenPosition, joystick.rect.anchoredPosition) > maxMovement)
@@ -70,7 +79,9 @@ public class JoystickController : MonoBehaviour
 
     void HandleLoseFinger(Finger lostFinger)
     {
-        if(lostFinger == movementFinger)
+        if (!GameController.Instance.GameHasStarted()) return;
+
+        if (lostFinger == movementFinger)
         {
             movementFinger = null;
             joystick.knob.anchoredPosition = Vector2.zero;

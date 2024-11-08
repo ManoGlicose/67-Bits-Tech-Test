@@ -11,6 +11,12 @@ public class HUDController : MonoBehaviour
     PlayerValues playerValues;
     public WaveController waves;
 
+    [Header("Mobile Safe Area")]
+    RectTransform rect;
+    Rect safeArea;
+    Vector2 _minAnchor;
+    Vector2 _maxAnchor;
+
     [Header("UI")]
     public Image healthBar;
     public Image damageBar;
@@ -40,10 +46,12 @@ public class HUDController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         ControlUI();
     }
+
+    
 
     void ControlUI()
     {

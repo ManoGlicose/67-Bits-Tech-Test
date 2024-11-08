@@ -9,6 +9,8 @@ public class GameController : MonoBehaviour
 
     PlayerActions controls;
 
+    public bool FPSTarget30 = false;
+
     bool gameHasStarted;
     bool gameIsPaused = false;
 
@@ -21,6 +23,9 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = FPSTarget30 ? 30 : 60;
+
         controls = new PlayerActions();
 
         if (Instance != null)

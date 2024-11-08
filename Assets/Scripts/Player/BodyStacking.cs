@@ -33,7 +33,7 @@ public class BodyStacking : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (bodies.Count > 0)
             Wobble();
