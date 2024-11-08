@@ -52,7 +52,7 @@ public class StoreButtonController : MonoBehaviour
         switch (productType)
         {
             case ProductType.STRENGTH:
-                text = GameController.Instance.GetStrengthLevel().ToString() + "x";
+                text = GameController.Instance.GetStrengthMultiplier().ToString() + "x";
                 break;
             case ProductType.BODIES:
                 int amount = GameController.Instance.GetMaxBodies();
@@ -92,12 +92,16 @@ public class StoreButtonController : MonoBehaviour
         switch (productType)
         {
             case ProductType.STRENGTH:
-                if (GameController.Instance.GetStrengthLevel() >= 2)
+                if (GameController.Instance.GetStrengthMultiplier() >= 2)
                     acquired = true;
+                else
+                    cost = 100 + GameController.Instance.GetStrengthLevel() * 100;
                     break;
             case ProductType.BODIES:
                 if (GameController.Instance.GetMaxBodies() >= 99)
                     acquired = true;
+                else
+                    cost = GameController.Instance.GetMaxBodies() * 100;
                 break;
             case ProductType.BLUE:
                 colorNumber = (int)Char.GetNumericValue(stringAcquired[0]);
@@ -157,16 +161,14 @@ public class StoreButtonController : MonoBehaviour
         switch (productType)
         {
             case ProductType.STRENGTH:
-                if (GameController.Instance.GetStrengthLevel() < 2)
+                if (GameController.Instance.GetStrengthMultiplier() < 2)
                     GameController.Instance.SetStrengthLevel(0.1f);
-                else
-                    GetAcquiredProduct();
+                GetAcquiredProduct();
                 break;
             case ProductType.BODIES:
                 if (GameController.Instance.GetMaxBodies() < 99)
                     GameController.Instance.SetMaxBodies(1);
-                else
-                    GetAcquiredProduct();
+                GetAcquiredProduct();
                 break;
             case ProductType.BLUE:
                 if (!acquired)

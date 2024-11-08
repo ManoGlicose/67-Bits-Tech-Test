@@ -125,7 +125,7 @@ public class PlayerValues : MonoBehaviour
         if (!gameObject.CompareTag("Player")) return;
 
         GameController.Instance.LoadData();
-        strength = GameController.Instance.GetStrengthLevel();
+        strength = GameController.Instance.GetStrengthMultiplier();
         maxBodiesToCarry = GameController.Instance.GetMaxBodies();
         FindFirstObjectByType<PlayerController>().SetPlayerColor(GameController.Instance.GetCurrentColorIndex());
     }

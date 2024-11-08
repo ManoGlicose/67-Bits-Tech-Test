@@ -145,9 +145,15 @@ public class GameController : MonoBehaviour
         //print(colors);
     }
 
-    public float GetStrengthLevel()
+    public float GetStrengthMultiplier()
     {
         return strengthLevel;
+    }
+
+    public int GetStrengthLevel()
+    {
+        int level = (int)((GetStrengthMultiplier() * 10) - 9);
+        return level;
     }
 
     public void SetStrengthLevel(float newLevel)
