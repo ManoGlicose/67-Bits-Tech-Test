@@ -51,8 +51,6 @@ public class HUDController : MonoBehaviour
         ControlUI();
     }
 
-    
-
     void ControlUI()
     {
         float health = (float)(playerValues.GetHealth() / playerValues.maxHealth);

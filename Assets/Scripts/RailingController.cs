@@ -7,12 +7,6 @@ public class RailingController : MonoBehaviour
     [Tooltip("Only two corners allowed. Otherwise it will not work properly")]
     public List<Transform> corners = new List<Transform>();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {

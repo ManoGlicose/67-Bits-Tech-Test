@@ -163,7 +163,6 @@ public class EnemyBehaviour : MonoBehaviour
         {
             if (item != null)
             {
-                //print(item.name + " attacked with " + thisAttack.attackPoint.name);
                 PlayerValues thisValue = item.GetComponentInParent<PlayerValues>();
                 thisValue.Damage(thisAttack.attackDamage, 1.5f);
             }
@@ -185,7 +184,6 @@ public class EnemyBehaviour : MonoBehaviour
 
         collectTrigger.enabled = true;
         canvas.gameObject.SetActive(false);
-        // Make collider available
     }
 
     public PlayerValues GetHealth()
@@ -198,7 +196,6 @@ public class EnemyBehaviour : MonoBehaviour
         if (!hasDied) return;
         if (other.CompareTag("Player"))
         {
-            // Add body to stack
             hips.GetComponent<Rigidbody>().isKinematic = true;
             other.GetComponent<PlayerController>().GetBodyStack().AddBodyToPile(hips);
         }

@@ -70,8 +70,6 @@ public class DeliverGround : MonoBehaviour
                 for (int i = 0; i < bodies.Count; i++)
                 {
                     allMoney += bodies[i].GetComponentInParent<EnemyBehaviour>().myCost;
-                    //if (bodies.Contains(bodies[i]))
-                    //    bodies.Remove(bodies[i]);
 
                     Destroy(bodies[i].parent.gameObject);
                 }
@@ -85,7 +83,6 @@ public class DeliverGround : MonoBehaviour
                 bodies.Clear();
             }
 
-            //waveController.NextWave();
             playerStack.ClearDelivery();
         }
     }

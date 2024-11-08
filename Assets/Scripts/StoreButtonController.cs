@@ -162,7 +162,6 @@ public class StoreButtonController : MonoBehaviour
 
     public void BuyProduct()
     {
-        // Deduct money
         if (GameController.Instance.CurrentMoney() < cost && !acquired) 
         {
             if (GameController.Instance.CurrentMoney() < cost)

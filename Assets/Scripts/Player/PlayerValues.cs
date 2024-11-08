@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerValues : MonoBehaviour
 {
-    //PlayerController controller;
-
     [Header("Health")]
     [Range(0, 100)]
     public float maxHealth = 100;
@@ -94,7 +92,6 @@ public class PlayerValues : MonoBehaviour
             GetComponent<PlayerController>().enabled = false;
             FindFirstObjectByType<HUDController>().GameOver();
             GameController.Instance.SaveData(money);
-            // Control camera zoom
         }
         else if (gameObject.CompareTag("Enemy"))
         {

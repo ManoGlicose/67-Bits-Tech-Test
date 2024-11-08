@@ -24,12 +24,6 @@ public class JoystickController : MonoBehaviour
         joystick.knob.sizeDelta = new Vector2(knobSize.x * (floatWidth / 1080), knobSize.y * (floatWidth / 1080));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void HandleFingerDown(Finger touchedFinger)
     {
         if (!GameController.Instance.GameHasStarted()) return;

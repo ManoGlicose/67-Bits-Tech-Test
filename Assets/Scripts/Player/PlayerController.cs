@@ -59,7 +59,6 @@ public class PlayerController : MonoBehaviour
         values = GetComponent<PlayerValues>();
 
         controls.Controls.Attack.performed += ctx => CountAttacks();
-        //controls.Controls.Throw.performed += ctx => GetBodyStack().ThrowBodies();
         controls.Controls.Pause.performed += ctx => FindFirstObjectByType<HUDController>().PauseGame();
     }
 
@@ -132,7 +131,6 @@ public class PlayerController : MonoBehaviour
         {
             canAttack = true;
             canMove = true;
-            //beingDamaged = false;
         }
         else
         {
@@ -188,7 +186,6 @@ public class PlayerController : MonoBehaviour
         {
             if (item != null)
             {
-                //print(item.name + " attacked with " + thisAttack.attackPoint.name);
                 PlayerValues thisValue = item.GetComponentInParent<PlayerValues>();
                 thisValue.Damage(Mathf.RoundToInt(thisAttack.attackDamage * values.GetStrength()), 0.2f);
             }

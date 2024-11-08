@@ -34,7 +34,6 @@ public class WaveController : MonoBehaviour
     {
         player = FindFirstObjectByType<PlayerController>().transform;
         gateTarget = gatePivots[0];
-        //StartWave();
     }
 
     public IEnumerator StartFirstWave()
@@ -70,7 +69,6 @@ public class WaveController : MonoBehaviour
     {
         GameObject newEnemy = Instantiate(enemyPrefab, spawnPoint.position, transform.rotation, null);
         newEnemy.GetComponent<EnemyBehaviour>().SetParameters(player, waveHealth);
-        //newEnemy.GetComponent<EnemyBehaviour>().GetHealth().maxHealth = waveHealth;
         if (!enemies.Contains(newEnemy))
             enemies.Add(newEnemy);
     }
